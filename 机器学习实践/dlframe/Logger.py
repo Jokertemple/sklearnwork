@@ -1,0 +1,50 @@
+class Logger:
+    def __init__(self, name, trigger=None) -> None:
+        self.name = name
+        self.trigger = trigger
+
+    def print(self, *x, **kwargs):
+        if self.trigger is not None:
+            self.trigger({
+                'type': 'print', 
+                'name': self.name, 
+                'args': x, 
+                'kwargs': kwargs
+            })
+            return
+        print('[{}]: '.format(self.name), end=' ')
+        print(*x, **kwargs)
+
+    def imshow(self, img):
+        if self.trigger is not None:
+            self.trigger({
+                'type': 'imshow', 
+                'name': self.name, 
+                'args': img
+            })
+            return
+        print(img)
+
+    def info(self, *x, **kwargs):
+        self.print(*x, **kwargs)
+
+    def debug(self, *x, **kwargs):
+        self.print(*x, **kwargs)
+
+    def warning(self, *x, **kwargs):
+        self.print(*x, **kwargs)
+
+    def error(self, *x, **kwargs):
+        self.print(*x, **kwargs)
+
+    def critical(self, *x, **kwargs):
+        self.print(*x, **kwargs)
+
+    @classmethod
+    def get_logger(cls, name):
+        logger = cls(name, trigger=Logger.global_trigger)
+        cls.loggers.setdefault(id(logger), logger)
+        return logger
+
+Logger.loggers = {}
+Logger.global_trigger = None
